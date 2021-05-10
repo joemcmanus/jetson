@@ -18,6 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #Set temp to turn fan speeds up
+lowTemp=22
 medTemp=30
 highTemp=35
 
@@ -27,13 +28,17 @@ if [ `whoami` != "root" ]
 then
 	echo "Sorry must be run as root, only root can control fans" 
 	echo "Try sudo ./$0 " 
+	exit 1
 fi 
 
 #read the temp and divide by 1000
 tempRaw=`cat /sys/class/thermal/thermal_zone0/temp`
 tempC=`expr $tempRaw / 1000`
 
-if [ $tempC -lt $medTemp ] 
+if [ $tempC -lt $lowTemp ] 
+then
+	fanSpeed=64
+elif [ $tempC -lt $medTemp ] 
 then
 	fanSpeed=128
 elif [ $tempC -lt $highTemp ]
